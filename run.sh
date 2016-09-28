@@ -17,7 +17,7 @@ if [ ! -d "$DATADIR/mysql" ]; then
     mysql_install_db --datadir="$DATADIR" --rpm
     echo 'Database initialized'
 
-    "$@" --skip-networking --datadir="$DATADIR" &
+    "$@" --skip-networking --datadir="$DATADIR" --wsrep-new-cluster &
     pid="$!"
 
     mysql=( mysql --protocol=socket -uroot )
@@ -84,4 +84,4 @@ EOSQL
     echo
 fi
 
-mysqld --datadir="$DATADIR"
+mysqld --datadir="$DATADIR" --wsrep_node_address=`ip -4 addr ls eth0 | awk '/inet / {print $2}' | cut -d"/" -f1`
