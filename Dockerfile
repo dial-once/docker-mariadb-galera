@@ -5,7 +5,9 @@ MAINTAINER jmuller@dial-once.com
 ENV LANG="en_US.UTF-8" \
   LC_ALL="en_US.UTF-8" \
   LANGUAGE="en_US.UTF-8" \
-  DOCKERIZE_VERSION="0.2.0"
+  DOCKERIZE_VERSION="0.2.0" \
+  MARIADB_DEFAULT_STORAGE_ENGINE="XtraDB" \
+  GALERA_SLAVE_THREADS=1
 
 RUN apk -U upgrade --no-cache && \
     apk --update add --no-cache mariadb mariadb-client ca-certificates wget bash && \

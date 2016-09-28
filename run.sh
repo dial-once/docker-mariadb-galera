@@ -4,6 +4,12 @@ cat /etc/mysql/conf.d/mysql_server.cnf
 DATADIR=/data
 set -- mysqld "$@"
 
+MASTER=false
+if [ "${HOSTNAME:(-2)}" = '-0' ]; then
+  echo "[MASTER]"
+  MASTER=true
+fi
+
 if [ ! -d "$DATADIR/mysql" ]; then
     if [ -z "$MYSQL_ROOT_PASSWORD" -a -z "$MYSQL_ALLOW_EMPTY_PASSWORD" -a -z "$MYSQL_RANDOM_ROOT_PASSWORD" ]; then
       echo >&2 'error: database is uninitialized and password option is not specified '
@@ -17,8 +23,13 @@ if [ ! -d "$DATADIR/mysql" ]; then
     mysql_install_db --datadir="$DATADIR" --rpm
     echo 'Database initialized'
 
-    "$@" --skip-networking --datadir="$DATADIR" --wsrep-new-cluster &
-    pid="$!"
+    if [ MASTER ]; then
+      "$@" --skip-networking --datadir="$DATADIR" --wsrep-new-cluster &
+      pid="$!"
+    else
+      "$@" --skip-networking --datadir="$DATADIR" &
+      pid="$!"
+    fi
 
     mysql=( mysql --protocol=socket -uroot )
 

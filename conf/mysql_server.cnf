@@ -5,7 +5,7 @@
 [server]
 bind-address=0.0.0.0
 binlog_format=row
-default_storage_engine=XtraDB
+default_storage_engine={{ .Env.MARIADB_DEFAULT_STORAGE_ENGINE }}
 innodb_autoinc_lock_mode=2
 innodb_locks_unsafe_for_binlog=1
 query_cache_size=0
@@ -14,7 +14,8 @@ query_cache_type=0
 [galera]
 wsrep_on=ON
 wsrep_provider="/usr/lib/galera/libgalera_smm.so"
-wsrep_cluster_address="gcomm://mariadb-node-0,mariadb-node-1,mariadb-node-2"
+# wsrep_cluster_address should be computed by the "run.sh" script based on env var (hostname-0, hostname-1, etc.)
+# wsrep_cluster_address="gcomm://mariadb-node-0,mariadb-node-1,mariadb-node-2"
 wsrep-sst-method=rsync
 
 #
@@ -22,6 +23,6 @@ wsrep-sst-method=rsync
 #
 
 # Tune this value for your system, roughly 2x cores; see https://mariadb.com/kb/en/mariadb/galera-cluster-system-variables/#wsrep_slave_threads
-# wsrep_slave_threads=1
+wsrep_slave_threads={{ .Env.GALERA_SLAVE_THREADS }}
 
 # innodb_flush_log_at_trx_commit=0
