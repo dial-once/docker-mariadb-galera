@@ -13,9 +13,8 @@ RUN apk -U upgrade --no-cache && \
     wget -O - https://github.com/jwilder/dockerize/releases/download/v${DOCKERIZE_VERSION}/dockerize-linux-amd64-v${DOCKERIZE_VERSION}.tar.gz | tar -xzf - -C /usr/local/bin && \
     apk del ca-certificates wget && \
     # Prepare configuration folder for MariaDB
-    mkdir -p /etc/mysql/conf.d && chown -R mysql:mysql /etc/mysql/conf.d && \
-    # Cleanup and prepare MariaDB run folders
-    mkdir -p /run/mysqld && chown -R mysql:mysql /run/mysqld && \
+    mkdir -p /etc/mysql/conf.d /usr/share/zoneinfo /run/mysqld && \
+    chown -R mysql:mysql /etc/mysql/conf.d /run/mysqld && \
     # ensure that /var/run/mysqld (used for socket and lock files) is writable regardless of the UID our mysqld instance ends up having at runtime
     chmod 777 /run/mysqld && \
     # Create shared volume data folder
