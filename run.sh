@@ -10,6 +10,16 @@ if [ "${HOSTNAME:(-2)}" = '-0' ]; then
   MASTER=1
 fi
 
+CLUSTER_ADDR="gcomm://$HOSTNAME"
+NAME_FINDER="${HOSTNAME:0:(-2)}"
+i=0
+NAME="${NAME_FINDER^^}_${i}_ENV_MARIADB_DEFAULT_STORAGE_ENGINE"
+while [ ! -z ${!NAME} ]; do
+  CLUSTER_ADDR="$CLUSTER_ADDR,${NAME_FINDER}-$i"
+  i=$((i+1))
+  NAME="${NAME_FINDER^^}_${i}_ENV_MARIADB_DEFAULT_STORAGE_ENGINE"
+done
+
 if [ ! -d "$DATADIR/mysql" ]; then
     if [ -z "$MYSQL_ROOT_PASSWORD" -a -z "$MYSQL_ALLOW_EMPTY_PASSWORD" -a -z "$MYSQL_RANDOM_ROOT_PASSWORD" ]; then
       echo >&2 'error: database is uninitialized and password option is not specified '
@@ -92,7 +102,7 @@ fi
 
 if [[ ("$MASTER" = 1) && (! -f "$DATADIR/mysql/cluster") ]]; then
   touch "$DATADIR/mysql/cluster"
-  mysqld --datadir="$DATADIR" --wsrep-new-cluster --wsrep_node_address=$HOSTNAME --wsrep_cluster_address=gcomm://mariadb-0
+  mysqld --datadir="$DATADIR" --wsrep-new-cluster --wsrep_node_address=$HOSTNAME --wsrep_cluster_address=$CLUSTER_ADDR
 else
-  mysqld --datadir="$DATADIR" --wsrep_node_address=$HOSTNAME --wsrep_cluster_address=gcomm://mariadb-0
+  mysqld --datadir="$DATADIR" --wsrep_node_address=$HOSTNAME --wsrep_cluster_address=$CLUSTER_ADDR
 fi
