@@ -4,10 +4,10 @@ cat /etc/mysql/conf.d/mysql_server.cnf
 DATADIR=/data
 set -- mysqld "$@"
 
-MASTER=false
+MASTER=0
 if [ "${HOSTNAME:(-2)}" = '-0' ]; then
   echo "[MASTER]"
-  MASTER=true
+  MASTER=1
 fi
 
 if [ ! -d "$DATADIR/mysql" ]; then
@@ -23,13 +23,8 @@ if [ ! -d "$DATADIR/mysql" ]; then
     mysql_install_db --datadir="$DATADIR" --rpm
     echo 'Database initialized'
 
-    if [ MASTER ]; then
-      "$@" --skip-networking --datadir="$DATADIR" --wsrep-new-cluster &
-      pid="$!"
-    else
-      "$@" --skip-networking --datadir="$DATADIR" &
-      pid="$!"
-    fi
+    "$@" --skip-networking --datadir="$DATADIR" --wsrep-new-cluster &
+    pid="$!"
 
     mysql=( mysql --protocol=socket -uroot )
 
@@ -95,4 +90,9 @@ EOSQL
     echo
 fi
 
-mysqld --datadir="$DATADIR" --wsrep-new-cluster --wsrep_node_address=$HOSTNAME --wsrep_cluster_address=gcomm://mariadb-0
+if [[ ("$MASTER" = 1) && (! -f "$DATADIR/mysql/cluster") ]]; then
+  touch "$DATADIR/mysql/cluster"
+  mysqld --datadir="$DATADIR" --wsrep-new-cluster --wsrep_node_address=$HOSTNAME --wsrep_cluster_address=gcomm://mariadb-0
+else
+  mysqld --datadir="$DATADIR" --wsrep_node_address=$HOSTNAME --wsrep_cluster_address=gcomm://mariadb-0
+fi
