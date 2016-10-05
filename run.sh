@@ -95,4 +95,4 @@ EOSQL
     echo
 fi
 
-mysqld --datadir="$DATADIR" --wsrep_node_address=$HOSTNAME --wsrep_cluster_address=gcomm://mariadb-0
+mysqld --datadir="$DATADIR" --wsrep-new-cluster --wsrep_node_address=$HOSTNAME --wsrep_cluster_address=gcomm://mariadb-0

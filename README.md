@@ -31,3 +31,5 @@ docker run -it -e MYSQL_ROOT_PASSWORD='root' --name=mariadb-1 -e HOSTNAME=mariad
 | MYSQL_RANDOM_ROOT_PASSWORD | `anything` | Generates a random root password |
 | MYSQL_DATABASE | `anything` | A database name to create on first launch |
 | MYSQL_USER | `username` | An user name to create on first launch. Must provide `MYSQL_PASSWORD` env var. If `MYSQL_DATABASE` is provided, it will be granted access to it |
+| MARIADB_DEFAULT_STORAGE_ENGINE | `InnoDB` | The default storage engine to use for the node |
+| GALERA_SLAVE_THREADS | `1` | Number of slave threads to start, [see doc](https://mariadb.com/kb/en/mariadb/galera-cluster-system-variables/#wsrep_slave_threads) |
