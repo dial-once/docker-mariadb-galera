@@ -95,4 +95,4 @@ EOSQL
     echo
 fi
 
-mysqld --datadir="$DATADIR" --wsrep_node_address=`ip -4 addr ls eth0 | awk '/inet / {print $2}' | cut -d"/" -f1`
+mysqld --datadir="$DATADIR" --wsrep_node_address=$HOSTNAME --wsrep_cluster_address=gcomm://mariadb-0

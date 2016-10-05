@@ -13,8 +13,8 @@ The container is ready to use with Docker Cloud.
 ## Manual (to try it locally)
 ```sh
 docker build -t dialonce/mariadb-galera:latest .
-docker run -it -e MYSQL_ROOT_PASSWORD='root' --name=mariadb-0 -e HOSTNAME=mariadb-0 --rm dialonce/mariadb-galera:latest
-docker run -it --name=mariadb-1 -e HOSTNAME=mariadb-1 --rm --link mariadb-0:mariadb-0 dialonce/mariadb-galera:latest
+docker run -it -e MYSQL_ROOT_PASSWORD='root' --name=mariadb-0 -e HOSTNAME=mariadb-0 --rm -p 3306:3306 dialonce/mariadb-galera:latest
+docker run -it -e MYSQL_ROOT_PASSWORD='root' --name=mariadb-1 -e HOSTNAME=mariadb-1 --rm -p 3306:3306 --link mariadb-0:mariadb-0 dialonce/mariadb-galera:latest
 ```
 
 ## Docker Cloud YML

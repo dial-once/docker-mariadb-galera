@@ -15,7 +15,7 @@ query_cache_type=0
 wsrep_on=ON
 wsrep_provider="/usr/lib/galera/libgalera_smm.so"
 # wsrep_cluster_address should be computed by the "run.sh" script based on env var (hostname-0, hostname-1, etc.)
-# wsrep_cluster_address="gcomm://mariadb-node-0,mariadb-node-1,mariadb-node-2"
+wsrep_cluster_address="gcomm://mariadb-0"
 wsrep-sst-method=rsync
 
 #
