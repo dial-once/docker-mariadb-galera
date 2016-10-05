@@ -4,20 +4,26 @@ cat /etc/mysql/conf.d/mysql_server.cnf
 DATADIR=/data
 set -- mysqld "$@"
 
+if [ -z $HOSTNAME ]; then
+  HOSTNAME=$DOCKERCLOUD_CONTAINER_HOSTNAME
+fi
+
 MASTER=0
-if [ "${HOSTNAME:(-2)}" = '-0' ]; then
+if [ "${HOSTNAME:(-2)}" = '-1' ]; then
   echo "[MASTER]"
   MASTER=1
 fi
 
+LIMIT=$(echo $HOSTNAME | sed 's/[^0-9]*//g')
+
 CLUSTER_ADDR="gcomm://$HOSTNAME"
 NAME_FINDER="${HOSTNAME:0:(-2)}"
-i=0
-NAME="${NAME_FINDER^^}_${i}_ENV_MARIADB_DEFAULT_STORAGE_ENGINE"
-while [ ! -z ${!NAME} ]; do
-  CLUSTER_ADDR="$CLUSTER_ADDR,${NAME_FINDER}-$i"
-  i=$((i+1))
-  NAME="${NAME_FINDER^^}_${i}_ENV_MARIADB_DEFAULT_STORAGE_ENGINE"
+
+for (( c=1; c<=$LIMIT; c++ ))
+do
+  if [ $c -ne $LIMIT ]; then
+    CLUSTER_ADDR="$CLUSTER_ADDR,${NAME_FINDER}-$c"
+  fi
 done
 
 if [ ! -d "$DATADIR/mysql" ]; then
@@ -100,8 +106,7 @@ EOSQL
     echo
 fi
 
-if [[ ("$MASTER" = 1) && (! -f "$DATADIR/mysql/cluster") ]]; then
-  touch "$DATADIR/mysql/cluster"
+if [ "$MASTER" = 1 ]; then
   mysqld --datadir="$DATADIR" --wsrep-new-cluster --wsrep_node_address=$HOSTNAME --wsrep_cluster_address=$CLUSTER_ADDR
 else
   mysqld --datadir="$DATADIR" --wsrep_node_address=$HOSTNAME --wsrep_cluster_address=$CLUSTER_ADDR
