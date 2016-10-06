@@ -20,7 +20,7 @@ ADD ./conf/mysql_server.cnf /mysql_server.cnf
 ADD ./run.sh /run.sh
 
 # Exposed galera cluster ports + MariaDB port
-EXPOSE 4567 4567 4568 4444 3306
+EXPOSE 4567 4568 4444 3306
 
 VOLUME ["/data"]
 
