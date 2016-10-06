@@ -8,13 +8,13 @@ if [ -z $HOSTNAME ]; then
   HOSTNAME=$DOCKERCLOUD_CONTAINER_HOSTNAME
 fi
 
+LIMIT=$(echo $HOSTNAME | sed 's/[^0-9]*//g')
+
 MASTER=0
 if [ "${HOSTNAME:(-2)}" = '-1' ]; then
   echo "[MASTER]"
   MASTER=1
 fi
-
-LIMIT=$(echo $HOSTNAME | sed 's/[^0-9]*//g')
 
 CLUSTER_ADDR="gcomm://$HOSTNAME"
 NAME_FINDER="${HOSTNAME:0:(-2)}"
@@ -39,7 +39,7 @@ if [ ! -d "$DATADIR/mysql" ]; then
     mysql_install_db --datadir="$DATADIR" --rpm
     echo 'Database initialized'
 
-    "$@" --skip-networking --datadir="$DATADIR" --wsrep-new-cluster &
+    "$@" --skip-networking --datadir="$DATADIR" &
     pid="$!"
 
     mysql=( mysql --protocol=socket -uroot )
@@ -107,7 +107,12 @@ EOSQL
 fi
 
 if [ "$MASTER" = 1 ]; then
-  mysqld --datadir="$DATADIR" --wsrep-new-cluster --wsrep_node_address=$HOSTNAME --wsrep_cluster_address=$CLUSTER_ADDR
+  if [ -f "$DATADIR/clustered" ]; then
+    mysqld --datadir="$DATADIR" --wsrep_node_address=$HOSTNAME --wsrep_cluster_address="gcomm://$NAME_FINDER-2"
+  else
+    touch "$DATADIR/clustered"
+    mysqld --datadir="$DATADIR" --wsrep_node_address=$HOSTNAME --wsrep_cluster_address=$CLUSTER_ADDR --wsrep-new-cluster
+  fi
 else
   mysqld --datadir="$DATADIR" --wsrep_node_address=$HOSTNAME --wsrep_cluster_address=$CLUSTER_ADDR
 fi
