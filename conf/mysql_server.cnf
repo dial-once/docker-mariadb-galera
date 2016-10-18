@@ -10,6 +10,7 @@ innodb_autoinc_lock_mode=2
 innodb_locks_unsafe_for_binlog=1
 query_cache_size=0
 query_cache_type=0
+max_allowed_packet={{ .Env.MARIADB_MAX_ALLOWED_PACKET }}
 
 [galera]
 wsrep_on=ON

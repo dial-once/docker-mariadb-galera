@@ -4,7 +4,8 @@ MAINTAINER jmuller@dial-once.com
 
 ENV DOCKERIZE_VERSION="0.2.0" \
   GALERA_SLAVE_THREADS=1 \
-  MARIADB_DEFAULT_STORAGE_ENGINE=InnoDB
+  MARIADB_DEFAULT_STORAGE_ENGINE=InnoDB \
+  MARIADB_MAX_ALLOWED_PACKET=32M
 
 RUN apt-get update && apt-get install wget -y && \
   wget -O - https://github.com/jwilder/dockerize/releases/download/v${DOCKERIZE_VERSION}/dockerize-linux-amd64-v${DOCKERIZE_VERSION}.tar.gz | tar -xzf - -C /usr/local/bin && \
