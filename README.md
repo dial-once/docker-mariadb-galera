@@ -41,6 +41,8 @@ docker run -it -e MYSQL_ALLOW_EMPTY_PASSWORD=true --name=mariadb-2 -e HOSTNAME=m
 | MYSQL_USER | `username` | An user name to create on first launch. Must provide `MYSQL_PASSWORD` env var. If `MYSQL_DATABASE` is provided, it will be granted access to it |
 | MARIADB_DEFAULT_STORAGE_ENGINE | `InnoDB` | The default storage engine to use for the node |
 | GALERA_SLAVE_THREADS | `1` | Number of slave threads to start, [see doc](https://mariadb.com/kb/en/mariadb/galera-cluster-system-variables/#wsrep_slave_threads) |
+| MARIADB_INNODB_BUFFER_POOL_SIZE | `134217728` | The pool size of your InnoDB buffers (in bytes), [see doc](https://mariadb.com/kb/en/mariadb/xtradbinnodb-server-system-variables/#innodb_buffer_pool_size) |
+| MARIADB_INNODB_BUFFER_POOL_INSTANCES | `1` | The number of instances for your InnoDB buffers, [see doc](https://mariadb.com/kb/en/mariadb/xtradbinnodb-server-system-variables/#innodb_buffer_pool_instances). Each should be at least 1GB of size (`POOL_SIZE`) |
 
 # Things to know
 ## Cluster shut down and clustering recovery

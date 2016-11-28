@@ -19,6 +19,9 @@ RUN apt-get update && apt-get install wget -y && \
 ADD ./conf/mysql_server.cnf /mysql_server.cnf
 ADD ./run.sh /run.sh
 
+ENV MARIADB_INNODB_BUFFER_POOL_SIZE=134217728 \
+  MARIADB_INNODB_BUFFER_POOL_INSTANCES=1
+
 # Exposed galera cluster ports + MariaDB port
 EXPOSE 4567 4568 4444 3306
 
