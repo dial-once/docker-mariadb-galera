@@ -8,8 +8,11 @@ binlog_format=row
 default_storage_engine={{ .Env.MARIADB_DEFAULT_STORAGE_ENGINE }}
 innodb_autoinc_lock_mode=2
 innodb_locks_unsafe_for_binlog=1
+innodb_buffer_pool_size={{ .Env.MARIADB_INNODB_BUFFER_POOL_SIZE }}
+innodb_buffer_pool_instances={{ .Env.MARIADB_INNODB_BUFFER_POOL_INSTANCES }}
 query_cache_size=0
 query_cache_type=0
+max_allowed_packet={{ .Env.MARIADB_MAX_ALLOWED_PACKET }}
 
 [galera]
 wsrep_on=ON
